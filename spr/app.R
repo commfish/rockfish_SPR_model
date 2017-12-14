@@ -81,18 +81,19 @@ server <- function(input, output) {
     } 
     
       spr %>% 
-        mutate(ssb0 = N_F.0 * weight * maturity,
-               ssb1 = N_F1 * weight * maturity,
-               ssb2 = N_F2 * weight * maturity,
-               ssb3 = N_F3 * weight * maturity,
-               ssb4 = N_F4 * weight * maturity,
-               ssb5 = N_F5 * weight * maturity,
-               ssb6 = N_F6 * weight * maturity,
-               ssb7 = N_F7 * weight * maturity,
-               ssb8 = N_F8 * weight * maturity,
-               ssb9 = N_F9 * weight * maturity,
-               ssb10 = N_F10 * weight * maturity,
-               ssbcur = N_Fcur * weight * maturity) %>% 
+        mutate(RLS = -1.58 + 2.58*(1-exp(-0.247 * age)),
+               ssb0 = N_F.0 * weight * maturity * RLS,
+               ssb1 = N_F1 * weight * maturity * RLS,
+               ssb2 = N_F2 * weight * maturity * RLS,
+               ssb3 = N_F3 * weight * maturity * RLS,
+               ssb4 = N_F4 * weight * maturity * RLS,
+               ssb5 = N_F5 * weight * maturity * RLS,
+               ssb6 = N_F6 * weight * maturity * RLS,
+               ssb7 = N_F7 * weight * maturity * RLS,
+               ssb8 = N_F8 * weight * maturity * RLS,
+               ssb9 = N_F9 * weight * maturity * RLS,
+               ssb10 = N_F10 * weight * maturity * RLS,
+               ssbcur = N_Fcur * weight * maturity * RLS) %>% 
         summarise_all(funs(sum)) %>% 
          mutate(spr1 = ssb1 / ssb0,
                spr2 = ssb2 / ssb0,
@@ -107,7 +108,7 @@ server <- function(input, output) {
                sprcur = ssbcur / ssb0)  %>% 
         gather(model, value, -age, -weight, -maturity, 
                -N_F, -N_F.0, -N_F1, -N_F2, -N_F3, -N_F4, -N_F5, -N_F6, -N_F7, -N_F8, -N_F9, -N_F10, -N_Fcur,
-               -ssb0, -ssb1, -ssb2, -ssb3, -ssb4, -ssb5, -ssb6, -ssb7, -ssb8, -ssb9, -ssb10, -ssbcur) %>% 
+               -ssb0, -ssb1, -ssb2, -ssb3, -ssb4, -ssb5, -ssb6, -ssb7, -ssb8, -ssb9, -ssb10, -ssbcur, -RLS) %>% 
         dplyr::select(age, weight, maturity, model, value) %>% 
         mutate(F = c(seq(0.02, 0.20, by = 0.02), input$F)) -> out
       out
